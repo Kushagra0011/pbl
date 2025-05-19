@@ -1,0 +1,38 @@
+# interpreter.py
+
+class Interpreter:
+    def __init__(self):
+        self.memory = {}  # Store variable values
+
+    def eval(self, node):
+        if node.type == 'program':
+            for child in node.children:
+                self.eval(child)  # Evaluate each statement
+        elif node.type == 'assign':
+            var_name = node.children[0].value
+            value_node = node.children[1]
+            value = self.eval(value_node)  # Evaluate the expression
+            self.memory[var_name] = value  # Store the result in memory
+        elif node.type == 'id':
+            return self.memory[node.value]  # Get value of the variable from memory
+        elif node.type == 'number':
+            return int(node.value)  # Return the number as an integer
+        elif node.type == 'binop':
+            left = self.eval(node.children[0])
+            right = self.eval(node.children[1])
+            if node.value == '+':
+                return left + right  # Add two numbers
+            elif node.value == '-':
+                return left - right  # Subtract two numbers
+            elif node.value == '*':
+                return left * right  # Multiply two numbers
+            elif node.value == '/':
+                return left / right  # Divide two numbers
+        elif node.type == 'print':
+            value = self.eval(node.children[0])  # Evaluate the expression to print
+            print(value)  # Output the value
+
+# Function to start the interpretation process
+def interpret(ast):
+    interpreter = Interpreter()
+    interpreter.eval(ast)
